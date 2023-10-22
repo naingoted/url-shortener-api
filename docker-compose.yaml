@@ -1,0 +1,26 @@
+services:
+  mongodb:
+    image: mongo:5.0.21
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # Map host machine port 27017 to container port 27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}  # Set your desired MongoDB username
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}  # Set your desired MongoDB password
+    volumes:
+      - mongodb_data:/data/db  # Use a named volume for persisting MongoDB data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+
+volumes:
+  mongodb_data:
