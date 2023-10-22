@@ -1,15 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { UrlMapping } from './url-mapping.schema';
-import { HelperService } from '../helpers/helpers.service';
-import * as mongoose from 'mongoose';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { UrlMapping } from "./url-mapping.schema";
+import { HelperService } from "../helpers/helpers.service";
+import * as mongoose from "mongoose";
 
 @Injectable()
 export class UrlShortenerService {
   constructor(
     @InjectModel(UrlMapping.name)
     private urlMappingModel: mongoose.Model<UrlMapping>,
-    private helper: HelperService,
+    private helper: HelperService
   ) {}
 
   async shortenUrl(url: string): Promise<string> {
@@ -26,13 +26,11 @@ export class UrlShortenerService {
     const shortId = this.helper.generateShortUrl();
     const shortUrl = `${domainName}/${shortId}`;
 
-    // Save the mapping in the database
-    const urlMapping = new this.urlMappingModel({
+    await this.urlMappingModel.create({
       longUrl: url,
       shortUrl: shortId,
     });
 
-    await urlMapping.save();
     return shortUrl;
   }
 
